@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice - Ebanks Swimming Academy</title>
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        @media print {
+            .top-bar, .navbar, .footer, .no-print {
+                display: none !important;
+            }
+            .invoice-container {
+                box-shadow: none !important;
+                border: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Bar -->
+    <div class="top-bar no-print">
+        <div class="top-bar-content">
+            <div class="top-bar-left">
+                <span>Become a certified swimmer with top instructors. <a href="about.html">Learn more</a></span>
+            </div>
+            <div class="top-bar-right">
+                <span>+1-876-555-0123</span>
+                <span>|</span>
+                <a href="mailto:info@ebanksswimming.com">info@ebanksswimming.com</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar no-print">
+        <div class="nav-container">
+            <div class="logo">
+                <h1>Ebanks Swimming Academy</h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link">Home</a></li>
+                <li><a href="products.html" class="nav-link">Lessons</a></li>
+                <li><a href="about.html" class="nav-link">About Us</a></li>
+                <li><a href="cart.html" class="nav-link">Cart <span id="cart-count">0</span></a></li>
+                <li><a href="login.html" class="nav-link">Login</a></li>
+                <li><a href="products.html" class="btn-primary">Book a Lesson</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Invoice Section -->
+    <section class="invoice-section" style="padding: 2rem 0; min-height: 80vh; background-color: #f5f5f5;">
+        <!-- Success Message -->
+        <div id="email-confirmation" style="max-width: 800px; margin: 0 auto 1rem auto; padding: 1rem; background: #d4edda; border: 1px solid #c3e6cb; border-radius: 8px; color: #155724; display: none;">
+            <strong>✓ Success!</strong> Your invoice has been generated and sent to your email address.
+        </div>
+        
+        <div id="invoice-display">
+            <!-- Invoice will be dynamically loaded here -->
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer no-print">
+        <div class="container">
+            <p>&copy; 2025 Ebanks Swimming Academy. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="../script.js"></script>
+    <script>
+        // Load and display invoice on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const invoiceDisplay = document.getElementById('invoice-display');
+            const emailConfirmation = document.getElementById('email-confirmation');
+            const lastInvoice = sessionStorage.getItem('lastInvoice');
+            
+            if (lastInvoice) {
+                const invoice = JSON.parse(lastInvoice);
+                invoiceDisplay.innerHTML = displayInvoice(invoice);
+                
+                // Show email confirmation message
+                emailConfirmation.style.display = 'block';
+                
+                // Clear session storage after displaying
+                // sessionStorage.removeItem('lastInvoice');
+            } else {
+                // If no invoice in session, try to get last invoice from AllInvoices
+                const allInvoices = JSON.parse(localStorage.getItem('AllInvoices')) || [];
+                if (allInvoices.length > 0) {
+                    const lastInvoice = allInvoices[allInvoices.length - 1];
+                    invoiceDisplay.innerHTML = displayInvoice(lastInvoice);
+                } else {
+                    invoiceDisplay.innerHTML = `
+                        <div style="text-align: center; padding: 3rem;">
+                            <h2>No Invoice Found</h2>
+                            <p>You don't have any invoices yet.</p>
+                            <a href="products.html" class="btn-primary">Browse Lessons</a>
+                        </div>
+                    `;
+                }
+            }
+        });
+    </script>
+</body>
+</html>

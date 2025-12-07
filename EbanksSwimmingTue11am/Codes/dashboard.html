@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Ebanks Swimming Academy</title>
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 2rem;
+        }
+        
+        .dashboard-section {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .dashboard-section h3 {
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 0.5rem;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .stat-card.gender {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        
+        .stat-card.age {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 0.5rem 0;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .search-section {
+            margin-bottom: 1.5rem;
+        }
+        
+        .search-input {
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 300px;
+            margin-right: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="top-bar-content">
+            <div class="top-bar-left">
+                <span>Become a certified swimmer with top instructors. <a href="about.html">Learn more</a></span>
+            </div>
+            <div class="top-bar-right">
+                <span>+1-876-555-0123</span>
+                <span>|</span>
+                <a href="mailto:info@ebanksswimming.com">info@ebanksswimming.com</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <h1>Ebanks Swimming Academy</h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link">Home</a></li>
+                <li><a href="products.html" class="nav-link">Lessons</a></li>
+                <li><a href="about.html" class="nav-link">About Us</a></li>
+                <li><a href="cart.html" class="nav-link">Cart <span id="cart-count">0</span></a></li>
+                <li><a href="login.html" class="nav-link">Login</a></li>
+                <li><a href="products.html" class="btn-primary">Book a Lesson</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Dashboard Section -->
+    <section class="dashboard-container">
+        <h2>User Analytics Dashboard</h2>
+        
+        <!-- User Frequency Section -->
+        <div class="dashboard-section">
+            <h3>User Distribution Statistics</h3>
+            <div id="user-frequency-display">
+                <!-- Stats will be loaded here -->
+            </div>
+        </div>
+        
+        <!-- Invoice Search Section -->
+        <div class="dashboard-section">
+            <h3>Invoice Management</h3>
+            <div class="search-section">
+                <input type="text" id="trn-search" class="search-input" placeholder="Search by TRN (e.g., 123-456-789)">
+                <button onclick="searchInvoicesByTrn()" class="btn-primary">Search Invoices</button>
+                <button onclick="ShowInvoices()" class="btn-secondary">Show All Invoices</button>
+            </div>
+            <p style="color: #666; font-style: italic;">Results will be displayed in the browser console (F12)</p>
+        </div>
+        
+        <!-- User Invoice Lookup Section -->
+        <div class="dashboard-section">
+            <h3>User Invoice Lookup</h3>
+            <div class="search-section">
+                <input type="text" id="user-trn-search" class="search-input" placeholder="Enter User TRN">
+                <button onclick="searchUserInvoices()" class="btn-primary">Get User Invoices</button>
+            </div>
+            <p style="color: #666; font-style: italic;">Results will be displayed in the browser console (F12)</p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Ebanks Swimming Academy. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="../script.js"></script>
+    <script>
+        // Load user frequency data on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            displayUserFrequency();
+        });
+        
+        function displayUserFrequency() {
+            const frequencyData = ShowUserFrequency();
+            const displayDiv = document.getElementById('user-frequency-display');
+            
+            let html = `
+                <div class="stat-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); margin-bottom: 2rem;">
+                    <div class="stat-label">Total Registered Users</div>
+                    <div class="stat-value">${frequencyData.totalUsers}</div>
+                </div>
+                
+                <h4 style="margin-top: 2rem; margin-bottom: 1rem;">Gender Distribution</h4>
+                <div class="stats-grid">
+            `;
+            
+            for (const [gender, count] of Object.entries(frequencyData.genderDistribution)) {
+                html += `
+                    <div class="stat-card gender">
+                        <div class="stat-label">${gender}</div>
+                        <div class="stat-value">${count}</div>
+                    </div>
+                `;
+            }
+            
+            html += `
+                </div>
+                
+                <h4 style="margin-top: 2rem; margin-bottom: 1rem;">Age Group Distribution</h4>
+                <div class="stats-grid">
+            `;
+            
+            for (const [ageGroup, count] of Object.entries(frequencyData.ageDistribution)) {
+                html += `
+                    <div class="stat-card age">
+                        <div class="stat-label">${ageGroup} years</div>
+                        <div class="stat-value">${count}</div>
+                    </div>
+                `;
+            }
+            
+            html += '</div>';
+            displayDiv.innerHTML = html;
+        }
+        
+        function searchInvoicesByTrn() {
+            const trnSearch = document.getElementById('trn-search').value.trim();
+            if (trnSearch) {
+                ShowInvoices(trnSearch);
+                alert('Invoice search results have been logged to the console. Press F12 to view.');
+            } else {
+                alert('Please enter a TRN to search');
+            }
+        }
+        
+        function searchUserInvoices() {
+            const userTrn = document.getElementById('user-trn-search').value.trim();
+            if (userTrn) {
+                GetUserInvoices(userTrn);
+                alert('User invoice results have been logged to the console. Press F12 to view.');
+            } else {
+                alert('Please enter a user TRN');
+            }
+        }
+    </script>
+</body>
+</html>
